@@ -249,34 +249,6 @@ def __Quenched(n, Name, Error = 0):
             return n.Nodes[Name].State[1]
     return Logic_Function
 
-def __SineSequence(n,Name,Amplitude,Period,Phase = 0):
-  def Logic_Function(n):
-    Arg = float(Phase) + 2 * numpy.pi/float(Period) * n.Iteration
-    Prob = 0.5 * (float(Amplitude) * numpy.sin(Arg) + 1.)
-    return bernoulli.rvs(Prob,size=1)
-  return Logic_Function
-  
-def __AmpSineSequence(n,Name,Amplitude,Period,Phase = 0):
-  Amplitude = float(Amplitude)
-  Phase = float(Phase)
-  Period = float(Period)
-  def Logic_Function(n):
-    Arg = Phase + 2 * numpy.pi/Period * n.Iteration
-    Prob = Amplitude * 0.5 * ( 1 + numpy.sin(Arg))
-    return bernoulli.rvs(Prob,size=1)
-  return Logic_Function  
-  
-def __RelSineSequence(n,Name,RelAmplitude,Period,Chatter,Phase=0):
-  Chatter = float(Chatter)
-  Amplitude = float(RelAmplitude)*min([Chatter,1-Chatter])
-  Phase = float(Phase)
-  Period = float(Period)
-  def Logic_Function(n):
-    Arg = Phase + 2 * numpy.pi/Period * n.Iteration
-    Prob = Amplitude * numpy.sin(Arg) + Chatter
-    return bernoulli.rvs(Prob,size=1)
-  return Logic_Function    
-
 def __RandomON(n, Name, PercentON):
     PercentON = float(PercentON)
     def Logic_Function(n):
