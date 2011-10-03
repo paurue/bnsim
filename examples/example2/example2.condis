@@ -1,0 +1,4 @@
+# Periodic sequence
+A* = Sequence 111000 0.00
+B* = Sequence 001110 0.00
+Num_New_Iterations = 200

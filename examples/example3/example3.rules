@@ -1,0 +1,4 @@
+# Chatter in a XOR gate
+X* = None
+Y*= None
+Z* = (X and not Y) or (not X and Y)

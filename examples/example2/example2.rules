@@ -1,0 +1,6 @@
+# Periodic sequence
+A* = None
+B*= None
+C* = (A and not B) 
+D* = (not A and B)
+E* = C or D

@@ -1,0 +1,4 @@
+# Chatter in a XOR gate
+X* = Sequence 0 0.50
+Y* = Sequence 0 0.50
+Num_New_Iterations = 200

@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#    Copyright (C) 2011 Nuria Domedel-Puig, Antonio J. Pons-Rivero, Pau Rué and
+#    Jordi Garcia-Ojalvo
+#
+#    Created: 2011-09-27 by Nuria Domedel-Puig, Antonio J. Pons-Rivero and Pau Rué 
+#
+#    This file is part of bnsim.
+#
+#    bnsim is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    bnsim is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with bnsim.  If not, see <http://www.gnu.org/licenses/>.
+
+import sys
+import os, os.path
+import random
+
+if __name__ == "__main__":
+    import optparse
+    from Boolean import Net
+    
+    op = optparse.OptionParser(usage="%prog [options]")
+    op.add_option("-r", "--rules", dest="file_rules", default = None,
+        help = "Boolean network **rules** descriptor file. ")
+    op.add_option("-s", "--states", dest = "file_states", default = None,
+        help = "Boolean network **states** file. Optionally an **initial conditions** file can be given.")
+    op.add_option("-c", "--conditions", dest="file_conditions", default = None,
+        help = "Boolean network **simulation conditions** descriptor file. ")
+    op.add_option("-o", "--output", dest="file_output", default = None,
+        help = "Boolean network **output** file. ")
+    op.add_option("-f", "--format", dest="format", default = False,
+        help = "Boolean network **save format** (0: all network, 1: requested nodes only).")        
+    op.add_option("-n", "--nodes", dest="requested_nodes", default = None,
+        help = "Boolean network **requested nodes** (required if save_short is True).")        
+    op.add_option("-a", "--async", dest="Is_Asynchronous",action="store_true", default = False,
+        help = "Asynchronous flag. If set to True, the update scheme is asynchronous.")
+    op.add_option("-A", "--semiasync", dest="Is_Semi_Asynchronous",action="store_true", default = False,
+        help = "Semi-asynchronous flag. If set to True, the update scheme is semi-asynchronous.")
+    op.add_option("-S", "--seed", dest="Seed", default = None,
+        help = "Seed used to run the asynchronous update scheme.")
+
+    options, args = op.parse_args()
+    if options.file_conditions == None:
+        print "Error: A conditions file must be specified."
+        exit()
+    file_conditions = options.file_conditions
+    basename, extension = os.path.splitext(file_conditions)
+    if extension != '.condis':
+        print "Error: Simulation conditions file provided does not have the '.condis' extension."
+        exit()
+    if options.file_output != None:
+        file_output = options.file_output
+    else:
+        file_output = "%s.out" % basename
+    if options.file_rules != None:
+        file_rules = options.file_rules
+    else:
+        file_rules = "%s.rules" % basename
+    if options.file_states != None:
+        file_states = options.file_states
+    else:
+        file_states = "%s.states" % basename
+    if options.Is_Asynchronous:
+        method='Asynchronous'
+    elif options.Is_Semi_Asynchronous:
+        method='Semi_Asynchronous'
+    else:
+        method='Synchronous'
+    print method
+    Seed=options.Seed
+    if Seed is not None:
+        random.seed(Seed)
+    N = Net.Net(file_rules, file_states, method=method)
+    if method=='Asynchronous':
+       N.Simulate_Asynchronous(file_conditions)
+    elif method=='Semi_Asynchronous':
+       N.Simulate_Semi_Asynchronous(file_conditions)
+    else:
+       N.Simulate(file_conditions)
+    if not options.format == 'True':
+        N.Save(file_output)
+    else:
+        N.Save_Requested_Nodes(file_output, options.requested_nodes)
+    print "Done!"
+
